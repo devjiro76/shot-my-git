@@ -23,7 +23,7 @@ export class SceneManager {
     this.camera.position.set(0, 3, 0)
 
     // Low-res renderer for pixel look (2 = mild retro, 4 = heavy pixel)
-    const pixelScale = 2
+    const pixelScale = 1.5
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false })
     this.renderer.setPixelRatio(1 / pixelScale)
     this.renderer.setSize(window.innerWidth, window.innerHeight)

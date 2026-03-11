@@ -4,14 +4,14 @@ const API_BASE = 'https://api.github.com'
 const MAX_DETAIL_COMMITS = 50
 
 const TYPE_PATTERNS: { type: CommitType; pattern: RegExp }[] = [
-  { type: 'merge', pattern: /^merge\b/i },
-  { type: 'bug', pattern: /^(fix|bug|hotfix|patch|resolve|close[sd]?|fixes)\b[\s(:]/i },
-  { type: 'test', pattern: /^test\b[\s(:]/i },
-  { type: 'docs', pattern: /^docs?\b[\s(:]/i },
-  { type: 'style', pattern: /^style\b[\s(:]/i },
-  { type: 'refactor', pattern: /^refactor\b[\s(:]/i },
-  { type: 'chore', pattern: /^(chore|build|ci|bump|release|version)\b[\s(:]/i },
-  { type: 'feature', pattern: /^(feat|feature|add|new|implement)\b[\s(:]/i },
+  { type: 'merge', pattern: /\bmerge\b/i },
+  { type: 'bug', pattern: /\b(fix|bug|hotfix|patch|resolve|close[sd]?|fixes|fixed|repair|workaround)\b/i },
+  { type: 'test', pattern: /\btest(s|ing)?\b/i },
+  { type: 'docs', pattern: /\bdocs?\b/i },
+  { type: 'style', pattern: /\bstyle\b/i },
+  { type: 'refactor', pattern: /\brefactor(ing)?\b/i },
+  { type: 'chore', pattern: /\b(chore|build|ci|bump|release|version|upgrade|update dep)\b/i },
+  { type: 'feature', pattern: /\b(feat|feature|add|new|implement|support)\b/i },
 ]
 
 function classifyCommit(message: string): CommitType {

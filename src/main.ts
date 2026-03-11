@@ -56,10 +56,20 @@ async function loadFromGithub(repoSlug: string) {
   }
 }
 
+function parseRepoSlug(input: string): string | null {
+  const trimmed = input.trim().replace(/\/+$/, '')
+  // Full URL: https://github.com/owner/repo or github.com/owner/repo
+  const urlMatch = trimmed.match(/(?:https?:\/\/)?github\.com\/([^/]+\/[^/]+)/)
+  if (urlMatch) return urlMatch[1]
+  // owner/repo format
+  if (/^[^/]+\/[^/]+$/.test(trimmed)) return trimmed
+  return null
+}
+
 btnGo.addEventListener('click', () => {
-  const slug = repoInput.value.trim()
-  if (!slug || !slug.includes('/')) {
-    showError('FORMAT: owner/repo')
+  const slug = parseRepoSlug(repoInput.value)
+  if (!slug) {
+    showError('FORMAT: owner/repo or GitHub URL')
     return
   }
   loadFromGithub(slug)
@@ -128,6 +138,9 @@ dropZone.addEventListener('drop', (e) => {
 const urlParams = new URLSearchParams(window.location.search)
 const repoParam = urlParams.get('repo')
 if (repoParam) {
-  repoInput.value = repoParam
-  loadFromGithub(repoParam)
+  const slug = parseRepoSlug(repoParam)
+  if (slug) {
+    repoInput.value = slug
+    loadFromGithub(slug)
+  }
 }

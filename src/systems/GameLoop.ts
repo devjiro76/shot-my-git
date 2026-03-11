@@ -35,8 +35,18 @@ export class GameLoop {
     this.environment = new Environment()
     this.environment.setup(sceneManager.scene)
 
-    this.bossSpawner = new BossSpawner(gitData.bugCommits)
-    this.shootingSystem = new ShootingSystem(gitData.codeCommits)
+    // If no bugs detected, promote random commits to bosses so the game is always playable
+    let bosses = gitData.bugCommits
+    let ammo = gitData.codeCommits
+    if (bosses.length === 0 && gitData.commits.length > 0) {
+      const shuffled = [...gitData.commits].sort(() => Math.random() - 0.5)
+      const bossCount = Math.max(5, Math.floor(shuffled.length * 0.3))
+      bosses = shuffled.slice(0, bossCount).map(c => ({ ...c, isBug: true }))
+      ammo = shuffled.slice(bossCount)
+    }
+
+    this.bossSpawner = new BossSpawner(bosses)
+    this.shootingSystem = new ShootingSystem(ammo.length > 0 ? ammo : gitData.commits)
 
     this.hud = new HUD()
     this.hud.setRepo(gitData.repoName, gitData.totalCommits)
