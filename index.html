@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHOT MY GIT</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      overflow: hidden;
+      cursor: crosshair;
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    #game-canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    #hud {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      color: #0f0;
+      font-family: 'Press Start 2P', monospace;
+      text-shadow: 0 0 10px #0f0;
+    }
+
+    #hud-repo {
+      position: absolute;
+      top: 16px; left: 16px;
+      font-size: 12px;
+    }
+
+    #hud-score {
+      position: absolute;
+      top: 16px; right: 16px;
+      font-size: 14px;
+      color: #ff0;
+      text-shadow: 0 0 10px #ff0;
+    }
+
+    #hud-ammo {
+      position: absolute;
+      bottom: 16px; right: 16px;
+      font-size: 11px;
+      color: #0ff;
+      text-shadow: 0 0 8px #0ff;
+    }
+
+    #hud-boss-info {
+      position: absolute;
+      bottom: 16px; left: 16px;
+      font-size: 9px;
+      max-width: 50%;
+      line-height: 1.6;
+      color: #f44;
+      text-shadow: 0 0 8px #f44;
+    }
+
+    #hud-crosshair {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      color: #fff;
+      text-shadow: 0 0 6px #fff;
+      pointer-events: none;
+    }
+
+    #hud-wave {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      color: #ff0;
+      text-shadow: 0 0 20px #ff0;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    #hud-center-msg {
+      position: absolute;
+      top: 40%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 16px;
+      color: #0f0;
+      text-shadow: 0 0 20px #0f0;
+      text-align: center;
+      line-height: 2;
+    }
+
+    /* Scanline overlay */
+    #scanlines {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.15) 2px,
+        rgba(0, 0, 0, 0.15) 4px
+      );
+      pointer-events: none;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game-canvas"></canvas>
+  <div id="hud">
+    <div id="hud-repo"></div>
+    <div id="hud-score">KILLS: 0</div>
+    <div id="hud-ammo">AMMO: 0</div>
+    <div id="hud-boss-info"></div>
+    <div id="hud-crosshair">+</div>
+    <div id="hud-wave"></div>
+    <div id="hud-center-msg">CLICK TO START</div>
+  </div>
+  <div id="scanlines"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
