@@ -125,9 +125,11 @@ export class BossSpawner {
     )
   }
 
+  private maxWaves = 10
+
   get allWavesComplete(): boolean {
     return (
-      this.currentIndex >= this.bugCommits.length &&
+      this.waveNumber >= this.maxWaves &&
       this.pendingSpawns.length === 0 &&
       this.activeBosses.every(b => !b.alive)
     )
@@ -160,8 +162,14 @@ export class BossSpawner {
     commits: Array<{ data: CommitData; tier: BossTier }>
     formation: SpawnFormation
   } {
-    const remaining = this.bugCommits.slice(this.currentIndex)
-    if (remaining.length === 0) return { commits: [], formation: 'SCATTERED' }
+    // Cycle through commits using modulo so waves never run out
+    const len = this.bugCommits.length
+    if (len === 0) return { commits: [], formation: 'SCATTERED' }
+    const startIdx = this.currentIndex % len
+    const remaining = [
+      ...this.bugCommits.slice(startIdx),
+      ...this.bugCommits.slice(0, startIdx),
+    ]
 
     const wave = this.waveNumber
 
