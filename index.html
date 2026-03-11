@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SHOT MY GIT</title>
+  <meta name="description" content="Turn your git repo into a retro FPS. Shoot bugs with your commits." />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
@@ -12,16 +13,171 @@
     body {
       background: #000;
       overflow: hidden;
-      cursor: crosshair;
       font-family: 'Press Start 2P', monospace;
     }
 
+    /* ─── Landing Page ─── */
+    #landing {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #0f0;
+      text-shadow: 0 0 20px #0f0;
+    }
+
+    #landing.hidden { display: none; }
+
+    #landing h1 {
+      font-size: 36px;
+      margin-bottom: 8px;
+      color: #0f0;
+      text-shadow: 0 0 30px #0f0, 0 0 60px #0a0;
+      letter-spacing: 4px;
+    }
+
+    #landing .subtitle {
+      font-size: 10px;
+      color: #0a0;
+      margin-bottom: 40px;
+    }
+
+    #landing .input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    #landing input {
+      background: #001100;
+      border: 2px solid #0f0;
+      color: #0f0;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      padding: 12px 16px;
+      width: 340px;
+      outline: none;
+      text-shadow: 0 0 4px #0f0;
+    }
+
+    #landing input::placeholder {
+      color: #040;
+    }
+
+    #landing input:focus {
+      border-color: #0ff;
+      box-shadow: 0 0 15px #0ff;
+    }
+
+    #landing button {
+      background: #0f0;
+      color: #000;
+      border: none;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #landing button:hover {
+      background: #0ff;
+      box-shadow: 0 0 20px #0ff;
+    }
+
+    #landing button:active {
+      transform: scale(0.95);
+    }
+
+    #landing .or-text {
+      font-size: 9px;
+      color: #060;
+      margin: 12px 0;
+    }
+
+    #landing .actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    #landing .btn-secondary {
+      background: transparent;
+      color: #0f0;
+      border: 1px solid #0f0;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #landing .btn-secondary:hover {
+      background: #0f01;
+      box-shadow: 0 0 15px #0f04;
+    }
+
+    #drop-zone {
+      border: 2px dashed #040;
+      padding: 20px 30px;
+      text-align: center;
+      font-size: 9px;
+      color: #040;
+      margin-top: 8px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    #drop-zone.dragover {
+      border-color: #0ff;
+      color: #0ff;
+      background: #001111;
+    }
+
+    #landing .progress {
+      font-size: 9px;
+      color: #0a0;
+      margin-top: 16px;
+      min-height: 16px;
+    }
+
+    #landing .error {
+      color: #f44;
+      text-shadow: 0 0 10px #f44;
+    }
+
+    #landing .hint {
+      font-size: 8px;
+      color: #030;
+      margin-top: 24px;
+      line-height: 2;
+      text-align: center;
+    }
+
+    /* Scanline on landing too */
+    #landing::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px
+      );
+      pointer-events: none;
+    }
+
+    /* ─── Game ─── */
     #game-canvas {
       display: block;
       width: 100vw;
       height: 100vh;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
+      cursor: crosshair;
     }
 
     #hud {
@@ -35,88 +191,52 @@
       text-shadow: 0 0 10px #0f0;
     }
 
-    #hud-repo {
-      position: absolute;
-      top: 16px; left: 16px;
-      font-size: 12px;
-    }
+    #hud-repo { position: absolute; top: 16px; left: 16px; font-size: 12px; }
+    #hud-score { position: absolute; top: 16px; right: 16px; font-size: 14px; color: #ff0; text-shadow: 0 0 10px #ff0; }
+    #hud-ammo { position: absolute; bottom: 16px; right: 16px; font-size: 11px; color: #0ff; text-shadow: 0 0 8px #0ff; }
+    #hud-boss-info { position: absolute; bottom: 16px; left: 16px; font-size: 9px; max-width: 50%; line-height: 1.6; color: #f44; text-shadow: 0 0 8px #f44; }
+    #hud-crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: #fff; text-shadow: 0 0 6px #fff; pointer-events: none; }
+    #hud-wave { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; color: #ff0; text-shadow: 0 0 20px #ff0; opacity: 0; transition: opacity 0.5s; }
+    #hud-center-msg { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; color: #0f0; text-shadow: 0 0 20px #0f0; text-align: center; line-height: 2; }
 
-    #hud-score {
-      position: absolute;
-      top: 16px; right: 16px;
-      font-size: 14px;
-      color: #ff0;
-      text-shadow: 0 0 10px #ff0;
-    }
-
-    #hud-ammo {
-      position: absolute;
-      bottom: 16px; right: 16px;
-      font-size: 11px;
-      color: #0ff;
-      text-shadow: 0 0 8px #0ff;
-    }
-
-    #hud-boss-info {
-      position: absolute;
-      bottom: 16px; left: 16px;
-      font-size: 9px;
-      max-width: 50%;
-      line-height: 1.6;
-      color: #f44;
-      text-shadow: 0 0 8px #f44;
-    }
-
-    #hud-crosshair {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 24px;
-      color: #fff;
-      text-shadow: 0 0 6px #fff;
-      pointer-events: none;
-    }
-
-    #hud-wave {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 20px;
-      color: #ff0;
-      text-shadow: 0 0 20px #ff0;
-      opacity: 0;
-      transition: opacity 0.5s;
-    }
-
-    #hud-center-msg {
-      position: absolute;
-      top: 40%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 16px;
-      color: #0f0;
-      text-shadow: 0 0 20px #0f0;
-      text-align: center;
-      line-height: 2;
-    }
-
-    /* Scanline overlay */
     #scanlines {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.15) 2px,
-        rgba(0, 0, 0, 0.15) 4px
-      );
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
       pointer-events: none;
       z-index: 20;
     }
   </style>
 </head>
 <body>
+  <!-- Landing Page -->
+  <div id="landing">
+    <h1>SHOT MY GIT</h1>
+    <div class="subtitle">TURN YOUR REPO INTO A RETRO FPS</div>
+
+    <div class="input-group">
+      <input id="repo-input" type="text" placeholder="owner/repo" spellcheck="false" />
+      <button id="btn-go">FIGHT</button>
+    </div>
+
+    <div class="or-text">── OR ──</div>
+
+    <div class="actions">
+      <button class="btn-secondary" id="btn-demo">DEMO</button>
+      <label class="btn-secondary" for="file-input" style="cursor:pointer">UPLOAD JSON</label>
+      <input type="file" id="file-input" accept=".json" style="display:none" />
+    </div>
+
+    <div id="drop-zone">DROP git-data.json HERE</div>
+
+    <div class="progress" id="landing-progress"></div>
+
+    <div class="hint">
+      PUBLIC GITHUB REPOS ONLY (API RATE LIMIT: 60/HR)<br>
+      FOR PRIVATE REPOS: npm run extract -- &lt;path&gt; &amp; UPLOAD JSON
+    </div>
+  </div>
+
+  <!-- Game -->
   <canvas id="game-canvas"></canvas>
   <div id="hud">
     <div id="hud-repo"></div>
@@ -125,7 +245,7 @@
     <div id="hud-boss-info"></div>
     <div id="hud-crosshair">+</div>
     <div id="hud-wave"></div>
-    <div id="hud-center-msg">CLICK TO START</div>
+    <div id="hud-center-msg"></div>
   </div>
   <div id="scanlines"></div>
   <script type="module" src="/src/main.ts"></script>
